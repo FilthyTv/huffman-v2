@@ -1,9 +1,10 @@
 import java.io.*;
 import java.util.*;
-import java.lang.*;
+import java.util.Map.Entry;
 
 public class Huffman {
 	public ArrayList<Genre> genres = new ArrayList<Genre>();
+	public ArrayList<String> uniqueWords = new ArrayList<String>();
 	
 	public Huffman(String baseDir) {
 		File base = new File(baseDir);
@@ -60,9 +61,31 @@ public class Huffman {
 							sg.dictionary.remove(word);
 							sg.dictionary.put(word, newCount);
 						}
+						if(!uniqueWords.contains(word)){
+							uniqueWords.add(word);
+						}
 					}
 				}
 			}
 		}
+	}
+	
+	public HuffmanTree buildTree(SubGenre sg) {
+		PriorityQueue<HuffmanTree> tree = new PriorityQueue<HuffmanTree>();
+		
+		for (Entry<String, Integer> entry : sg.dictionary.entrySet()) {
+			tree.offer( new HuffmanLeaf(entry.getValue(), entry.getKey()) );
+		}
+		
+		assert tree.size() > 0;
+		
+		while(tree.size() > 1) {
+			HuffmanTree a = tree.poll();
+			HuffmanTree b = tree.poll();
+			
+			tree.offer(new HuffmanNode(a, b));
+		}
+		
+		return tree.poll();
 	}
 }

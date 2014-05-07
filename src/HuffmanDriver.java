@@ -1,7 +1,4 @@
 import java.util.Hashtable;
-import java.util.Map.Entry;
-
-
 
 public class HuffmanDriver {
 
@@ -9,14 +6,16 @@ public class HuffmanDriver {
 		Huffman huf = new Huffman("lyricdata");
 		HuffmanTree genreTree;
 		HuffmanTree subgenreTree;
+		HuffmanTree artistTree;
 		Hashtable<String, String> encodedHash;
 		double huffCount, blockCount;
 		
 		System.out.println("\nBuilding word count for all artists");
-		huf.countSubs();
+		huf.countWords();
 		System.out.println("Words have been counted!\n");
 		
 		/***** First Part, Compress each subgenre and genre with its own tree *********/
+		System.out.println("\n:::::::::::::::::: Part A, encode each subgenre and genre with itself :::::::::::::::::::::\n");
 		for(Genre g : huf.genres) {
 			System.out.println("\n---ALL " + g.title.toUpperCase() + "---\nBuilding tree for all " + g.title);
 			genreTree = g.buildTree();
@@ -49,25 +48,54 @@ public class HuffmanDriver {
 			
 		}
 		
+		/***** Second Part, Apply a single subgenre to all other subgenres *********/
+		System.out.println("\n:::::::::::::::::: Part B, encode each subgenre with every other subgenre :::::::::::::::::::::\n");
+		for(Genre g : huf.genres) {
+			for(SubGenre sg : g.subgenres) {
+				System.out.println("\n---" + sg.title.toUpperCase() + " as the base---");
+				subgenreTree = sg.buildTree();
+				encodedHash = huf.encodeWords(subgenreTree, new StringBuffer());
+				for(SubGenre s : g.subgenres) {
+					if(s != sg) {
+						System.out.println("Encoding " + s.title + " " + g.title + " with " + sg.title + " " + g.title);
+						try {
+							huffCount = s.huffCount(encodedHash);
+							blockCount = s.blockCount(encodedHash);
+							System.out.println("Ratio: " + huffCount/blockCount);
+						} catch (Exception e) {
+							System.out.println("************Failed to encode");
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}
 		
-		/*
-		SubGenre bluegrass = huf.genres.get(0).subgenres.get(0);
+		/***** Third Part, Apply each artist to its subgenre and genre *********/
+		System.out.println("\n:::::::::::::::::: Part C, encode each artists genre and subgenre using just the artist :::::::::::::::::::::\n");
+		for(Genre g : huf.genres) {
+			for(SubGenre sg : g.subgenres) {
+				for(Artist a : sg.artists) {
+					System.out.println("\n---" + a.name + " as the base---");
+					artistTree = a.buildTree();
+					encodedHash = huf.encodeWords(artistTree, new StringBuffer());
+					try {
+						System.out.println("Encoding owners subgenre");
+						huffCount = a.subgenre.huffCount(encodedHash);
+						blockCount = a.subgenre.blockCount(encodedHash);
+						System.out.println("Ratio: " + huffCount/blockCount);
+						System.out.println("\nEncoding owners genre");
+						huffCount = a.genre.huffCount(encodedHash);
+						blockCount = a.genre.blockCount(encodedHash);
+						System.out.println("Ratio: " + huffCount/blockCount);
+					} catch (Exception e) {
+						System.out.println("**************Failed to encode");
+						e.printStackTrace();
+					}
+				}
+			}
+		}
 		
-		System.out.println("\nBuilding the tree");
-		HuffmanTree tree = huf.buildTree(bluegrass);
-		System.out.println("Tree built!\n");
-		
-		System.out.println("Encoding Words...");
-		Hashtable<String, String> encodedHash = huf.encodeWords(tree, new StringBuffer());
-		System.out.println("Successfully Encoded!\n");
-		
-		try {
-			System.out.println("huffcount = " + huf.huffCount(bluegrass, encodedHash));
-			System.out.println("blockcount = " + huf.blockCount(bluegrass, encodedHash));
-			System.out.println("ratio = " + ((double)(huf.huffCount(bluegrass, encodedHash) / (double)huf.blockCount(bluegrass, encodedHash))));
-		} catch (Exception e) {
-			e.printStackTrace();
-		};
-		// */
+		System.out.println("\n\nDONE!");
 	}
 }

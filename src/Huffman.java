@@ -26,7 +26,7 @@ public class Huffman {
 						
 						for(File art : sgcontents) {
 							if(art.isFile()) {
-								Artist artist = new Artist(art.getName().substring(0, art.getName().length() - 4));
+								Artist artist = new Artist(art.getName().substring(0, art.getName().length() - 4), genre, subgenre);
 								artist.path = art.getPath();
 								subgenre.artists.add(artist);
 								System.out.println("Adding artist " + artist.name + " in sg " + subgenre.title + " in g " + genre.title);
@@ -38,7 +38,7 @@ public class Huffman {
 		}
 	}
 	
-	public void countSubs() {
+	public void countWords() {
 		//Count all of the words
 		for(Genre g : genres) {
 			for (SubGenre sg : g.subgenres) {
@@ -55,6 +55,12 @@ public class Huffman {
 						numberOfWords++;
 						word = s.next();
 						word = word.toLowerCase().replaceAll("[^a-zA-Z ]", "");
+						if(a.dictionary.get(word) == null) {
+							a.dictionary.put(word, 1);
+						} else {
+							a.dictionary.put(word, sg.dictionary.get(word) + 1);
+						}
+						
 						if(sg.dictionary.get(word) == null) {
 							sg.dictionary.put(word, 1);
 						} else {
@@ -78,14 +84,26 @@ public class Huffman {
 		// Unique words has been built by now, we need to to through each subgenres
 		// dictionary and make sure it includes everyword in our entire set at least
 		// once.  This is performing the "add one" operation.  
-		/* Activate this comment to disable the "add one" operation
+		//* Activate this comment to disable the "add one" operation
 		for(String word : uniqueWords.keySet()) {
 			for(Genre g : genres) {
+				if(g.dictionary.get(word) == null) {
+					g.dictionary.put(word, 1);
+				} else {
+					g.dictionary.put(word, g.dictionary.get(word) + 1);
+				}
 				for(SubGenre sg : g.subgenres) {
 					if(sg.dictionary.get(word) == null) {
 						sg.dictionary.put(word, 1);
 					} else {
 						sg.dictionary.put(word, sg.dictionary.get(word) + 1);
+					}
+					for(Artist a : sg.artists) {
+						if(a.dictionary.get(word) == null) {
+							a.dictionary.put(word, 1);
+						} else {
+							a.dictionary.put(word, a.dictionary.get(word) + 1);
+						}
 					}
 				}
 			}

@@ -37,6 +37,8 @@ public class SubGenre {
 
 		for(String key : entries.keySet()) {
 			// multiply length of bits by how many times the word appears
+			// entries.get(key) will return the number of times the word is in the target 
+			// encodedHash.get(key) will get the encoding for the word from the base, then use its length as number of bits
 			count += (encodedHash.get(key).length() * entries.get(key));
 		}
 

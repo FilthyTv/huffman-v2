@@ -1,8 +1,17 @@
+import java.awt.Dimension;
 import java.io.*;
 import java.util.*;
 
+import javax.swing.JPanel;
+
+import org.jfree.chart.*;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.xy.*;
+import org.jfree.ui.*;
+
 public class Huffman {
 	int numberOfWords = 0;
+	int numberOfSongs = 0;
 	public ArrayList<Genre> genres = new ArrayList<Genre>();
 	public static Hashtable<String, String> uniqueWords = new Hashtable<String, String>();
 	
@@ -141,4 +150,34 @@ public class Huffman {
         
         return encodedHash;
     }
+	
+	@SuppressWarnings("unchecked")
+	public void makeGraph(String graphTitle, String base, String target, ArrayList<XYDataItem> items) throws Exception {
+		ApplicationFrame demo = new ApplicationFrame("Base: " + base + " - Target: " + target);
+		XYSeriesCollection data = new XYSeriesCollection();
+		data.addSeries(new XYSeries(0));
+		
+		for(XYDataItem item : items) {
+			data.getSeries(0).add(item);
+		}
+		
+		String chartName = new String("Base: " + base + " - Target: " + target);
+		JFreeChart chart = ChartFactory.createScatterPlot(
+		chartName, 					// chart title
+		"Genre", 					// domain axis label
+		"Compression Ratio (Huffman/Bloc)", 		// range axis label
+		data, // data
+		PlotOrientation.VERTICAL,	// orientation
+		false, 						// include legend
+		true, 						// tooltips
+		false 						// urls
+		); 
+		 
+		JPanel chartPanel = new ChartPanel(chart);
+		chartPanel.setPreferredSize(new Dimension(500, 270));
+		demo.setContentPane(chartPanel);  
+		demo.pack();
+		RefineryUtilities.centerFrameOnScreen(demo);
+		demo.setVisible(true);
+	}
 }

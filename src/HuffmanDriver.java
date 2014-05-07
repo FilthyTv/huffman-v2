@@ -1,4 +1,6 @@
-import java.util.Hashtable;
+import org.jfree.data.xy.*;
+
+import java.util.*;
 
 public class HuffmanDriver {
 
@@ -50,24 +52,32 @@ public class HuffmanDriver {
 		
 		/***** Second Part, Apply a single subgenre to all other subgenres *********/
 		System.out.println("\n:::::::::::::::::: Part B, encode each subgenre with every other subgenre :::::::::::::::::::::\n");
+		int count = 0;
 		for(Genre g : huf.genres) {
 			for(SubGenre sg : g.subgenres) {
 				System.out.println("\n---" + sg.title.toUpperCase() + " as the base---");
 				subgenreTree = sg.buildTree();
 				encodedHash = huf.encodeWords(subgenreTree, new StringBuffer());
+				ArrayList<XYDataItem> items = new ArrayList<XYDataItem>();
 				for(SubGenre s : g.subgenres) {
-					if(s != sg) {
-						System.out.println("Encoding " + s.title + " " + g.title + " with " + sg.title + " " + g.title);
-						try {
-							huffCount = s.huffCount(encodedHash);
-							blockCount = s.blockCount(encodedHash);
-							System.out.println("Ratio: " + huffCount/blockCount);
-						} catch (Exception e) {
-							System.out.println("************Failed to encode");
-							e.printStackTrace();
-						}
+					System.out.println("Encoding " + s.title + " " + g.title + " with " + sg.title + " " + g.title);
+					try {
+						huffCount = s.huffCount(encodedHash);
+						blockCount = s.blockCount(encodedHash);
+						items.add(new XYDataItem(count, (huffCount/blockCount)));
+						System.out.println("Ratio: " + huffCount/blockCount);
+					} catch (Exception e) {
+						System.out.println("************Failed to encode");
+						e.printStackTrace();
 					}
 				}
+				try {
+					huf.makeGraph("title", sg.title, "", items);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				items.clear();
+				count++;
 			}
 		}
 		

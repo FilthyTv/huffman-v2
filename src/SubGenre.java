@@ -47,6 +47,15 @@ public class SubGenre {
 	
 	public int blockCount(Hashtable<String, String> encodedHash) throws Exception {
 		//to get the number of bits for block encoding we count the number of words in the dictionary and multiply by the log base 2 of that number
+		double log2s = Math.log10(Huffman.uniqueWords.size()) / Math.log10(2);
+		int wordCount = 0;
+		
+		for(String key : this.dictionary.keySet()) {
+			wordCount += this.dictionary.get(key);
+		}
+		
+		return (int)(log2s * wordCount);
+		/*
 		int subCount = 0;
 		int count = Huffman.uniqueWords.size();
 		
@@ -58,5 +67,6 @@ public class SubGenre {
 		
 		subCount *= Math.log(count)/Math.log(2);
 	    return subCount;
+	    */
 	}
 }

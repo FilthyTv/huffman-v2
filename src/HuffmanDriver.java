@@ -61,25 +61,26 @@ public class HuffmanDriver {
 				ArrayList<XYDataItem> items = new ArrayList<XYDataItem>();
 				for(Genre genre : huf.genres) { 
 					for(SubGenre s : genre.subgenres) {
-						System.out.println("Encoding " + s.title + " " + genre.title + " with " + sg.title + " " + genre.title);
+						System.out.println("Encoding " + s.title + " " + genre.title + " with " + sg.title + "(" + count + ") " + genre.title);
 						try {
 							huffCount = s.huffCount(encodedHash);
 							blockCount = s.blockCount(encodedHash);
-							items.add(new XYDataItem(count, (huffCount/blockCount)));
+							items.add(new XYDataItem((Number)count, (Number)(huffCount/blockCount)));
 							System.out.println("Ratio: " + huffCount/blockCount);
 						} catch (Exception e) {
 							System.out.println("************Failed to encode");
 							e.printStackTrace();
 						}
+						count++;
 					}
 				}
+				count = 0;
 				try {
 					huf.makeGraph("title", sg.title, "all other subs", items);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				items.clear();
-				count++;
 			}
 		}
 		

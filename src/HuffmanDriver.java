@@ -18,7 +18,7 @@ public class HuffmanDriver {
 		
 		/***** First Part, Compress each subgenre and genre with its own tree *********/
 		for(Genre g : huf.genres) {
-			System.out.println("Building tree for " + g.title);
+			System.out.println("\n---ALL " + g.title.toUpperCase() + "---\nBuilding tree for all " + g.title);
 			genreTree = g.buildTree();
 			System.out.println("Tree built!\n\nEncoding words...");
 			encodedHash = huf.encodeWords(genreTree, new StringBuffer());
@@ -26,13 +26,13 @@ public class HuffmanDriver {
 			try {
 				huffCount = g.huffCount(encodedHash);
 				blockCount = g.blockCount(encodedHash);
-				System.out.println("\nRatio for " + g.title + "\t" + huffCount/blockCount);
+				System.out.println("\nRatio for all " + g.title + ": " + huffCount/blockCount);
 			} catch (Exception e) {
 				System.out.println("Error in compression");
 				e.printStackTrace();
 			}
 			for(SubGenre sg : g.subgenres) {
-				System.out.println("Building tree for " + sg.title);
+				System.out.println("\n---" + sg.title.toUpperCase() + " " + g.title.toUpperCase() + "---\nBuilding tree for " + sg.title + " " + g.title);
 				subgenreTree = sg.buildTree();
 				System.out.println("Tree built!\n\nEncoding words...");
 				encodedHash = huf.encodeWords(subgenreTree, new StringBuffer());
@@ -40,7 +40,7 @@ public class HuffmanDriver {
 				try {
 					huffCount = sg.huffCount(encodedHash);
 					blockCount = sg.blockCount(encodedHash);
-					System.out.println("\nRatio for " + sg.title + "\t" + huffCount/blockCount);
+					System.out.println("\nRatio for " + sg.title + " " + g.title + ": " + huffCount/blockCount);
 				} catch (Exception e) {
 					System.out.println("Error in compression");
 					e.printStackTrace();

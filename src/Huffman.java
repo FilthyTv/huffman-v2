@@ -1,12 +1,10 @@
 import java.io.*;
 import java.util.*;
-import java.util.Map.Entry;
-import java.util.Iterator;
 
 public class Huffman {
 	int numberOfWords = 0;
 	public ArrayList<Genre> genres = new ArrayList<Genre>();
-	public Hashtable<String, String> uniqueWords = new Hashtable<String, String>();
+	public static Hashtable<String, String> uniqueWords = new Hashtable<String, String>();
 	
 	public Huffman(String baseDir) {
 		File base = new File(baseDir);
@@ -60,37 +58,40 @@ public class Huffman {
 						if(sg.dictionary.get(word) == null) {
 							sg.dictionary.put(word, 1);
 						} else {
-							int newCount = sg.dictionary.get(word) + 1;
-							sg.dictionary.remove(word);
-							sg.dictionary.put(word, newCount);
+							sg.dictionary.put(word, sg.dictionary.get(word) + 1);
+						}
+						
+						if(g.dictionary.get(word) == null) {
+							g.dictionary.put(word, 1);
+						} else {
+							g.dictionary.put(word, g.dictionary.get(word) + 1);
 						}
 						
 						uniqueWords.put(word, "");
 					}
+					s.close();
 				}
 			}
 		}
-	}
-	
-	public HuffmanTree buildTree(SubGenre sg) {
-		PriorityQueue<HuffmanTree> tree = new PriorityQueue<HuffmanTree>();
-		
-		for (Entry<String, Integer> entry : sg.dictionary.entrySet()) {
-			tree.offer( new HuffmanLeaf(entry.getValue(), entry.getKey()) );
+		//TODO: look into "add one"
+		/*********************** Add One Operation ********************************/
+		// Unique words has been built by now, we need to to through each subgenres
+		// dictionary and make sure it includes everyword in our entire set at least
+		// once.  This is performing the "add one" operation.  
+		/* Activate this comment to disable the "add one" operation
+		for(String word : uniqueWords.keySet()) {
+			for(Genre g : genres) {
+				for(SubGenre sg : g.subgenres) {
+					if(sg.dictionary.get(word) == null) {
+						sg.dictionary.put(word, 1);
+					} else {
+						sg.dictionary.put(word, sg.dictionary.get(word) + 1);
+					}
+				}
+			}
 		}
-		
-		assert tree.size() > 0;
-		
-		while(tree.size() > 1) {
-			HuffmanTree a = tree.poll();
-			HuffmanTree b = tree.poll();
-			
-			tree.offer(new HuffmanNode(a, b));
-		}
-		
-		return tree.poll();
+		// */
 	}
-	
 	
 	public Hashtable<String, String> encodeWords(HuffmanTree tree, StringBuffer prefix) {
 		
@@ -122,39 +123,4 @@ public class Huffman {
         
         return encodedHash;
     }
-	
-	public int huffCount(SubGenre subgenre, Hashtable<String, String> encodedHash) throws Exception {
-		
-		Hashtable<String, Integer> entries = subgenre.dictionary;
-		int count = 0;
-		
-		for(String key : entries.keySet()) {
-			// multiply length of bits by how many times the word appears
-			count += (encodedHash.get(key).length() * entries.get(key));
-		}
-		
-		return count;
-	}
-	
-	public int blockCount(SubGenre subgenre, Hashtable<String, String> encodedHash) throws Exception {
-		//to get the number of bits for block encoding we count the number of words in the dictionary and multiply by the log base 2 of that number
-		int subCount = 0;
-		int count = 0;
-		
-		Hashtable<String, Integer> entries = subgenre.dictionary;
-		
-		for(String key : entries.keySet()) {
-			subCount += (entries.get(key));
-		}
-		
-		/*for (Entry<String, String> entry : encodedHash.entrySet()) {
-		    	count++;
-		}*/
-
-		for(String key : uniqueWords.keySet()){
-			count++;
-		}
-	    subCount *= Math.log(count)/Math.log(2);
-	    return subCount;
-	}
 }

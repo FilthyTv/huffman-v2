@@ -4,7 +4,7 @@ import java.util.Map.Entry;
 
 public class Huffman {
 	public ArrayList<Genre> genres = new ArrayList<Genre>();
-	public ArrayList<String> uniqueWords = new ArrayList<String>();
+	public Hashtable<String, String> uniqueWords = new Hashtable<String, String>();
 	
 	public Huffman(String baseDir) {
 		File base = new File(baseDir);
@@ -61,9 +61,8 @@ public class Huffman {
 							sg.dictionary.remove(word);
 							sg.dictionary.put(word, newCount);
 						}
-						if(!uniqueWords.contains(word)){
-							uniqueWords.add(word);
-						}
+						
+						uniqueWords.put(word, "");
 					}
 				}
 			}

@@ -144,7 +144,7 @@ public class Huffman {
 		Hashtable<String, Integer> entries = subgenre.dictionary;
 		
 		for(String key : entries.keySet()) {
-			subCount += (key.length() * entries.get(key));
+			subCount += (entries.get(key));
 		}
 		
 		/*for (Entry<String, String> entry : encodedHash.entrySet()) {
@@ -154,7 +154,7 @@ public class Huffman {
 		for(String key : uniqueWords.keySet()){
 			count++;
 		}
-	    count *= Math.log(count)/Math.log(2);
-	    return count;
+	    subCount *= Math.log(count)/Math.log(2);
+	    return subCount;
 	}
 }

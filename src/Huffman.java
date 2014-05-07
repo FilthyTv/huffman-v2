@@ -88,4 +88,36 @@ public class Huffman {
 		
 		return tree.poll();
 	}
+	
+	
+	public Hashtable<String, String> encodeWords(HuffmanTree tree, StringBuffer prefix) {
+		
+		Hashtable<String, String> encodedHash = new Hashtable<String, String>();
+		
+        assert tree != null;
+        if (tree instanceof HuffmanLeaf) {
+            HuffmanLeaf leaf = (HuffmanLeaf)tree;
+ 
+            // print out character, frequency, and code for this leaf (which is just the prefix)
+            // System.out.println(leaf.word + "\t" + leaf.frequency + "\t" + prefix);
+            
+            //create a new word with the same name but different value (instead of frequency we use its code)
+	        encodedHash.put(leaf.word, prefix.toString());
+ 
+        } else if (tree instanceof HuffmanNode) {
+            HuffmanNode node = (HuffmanNode)tree;
+ 
+            // traverse left
+            prefix.append('0');
+            encodedHash.putAll(encodeWords(node.left, prefix));
+            prefix.deleteCharAt(prefix.length()-1);
+ 
+            // traverse right
+            prefix.append('1');
+            encodedHash.putAll(encodeWords(node.right, prefix));
+            prefix.deleteCharAt(prefix.length()-1);
+        }
+        
+        return encodedHash;
+    }
 }

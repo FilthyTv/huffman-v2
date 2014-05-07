@@ -9,7 +9,11 @@ public class HuffmanDriver {
 		System.out.println("Words have been counted!\n");
 		
 		System.out.println("\nBuilding the tree");
-		huf.buildTree(huf.genres.get(0).subgenres.get(0)); //Country, Bluegrass
+		HuffmanTree tree = huf.buildTree(huf.genres.get(0).subgenres.get(0)); //Country, Bluegrass
 		System.out.println("Tree built!\n");
+		
+		System.out.println("Encoding Words...");
+		huf.encodeWords(tree, new StringBuffer());
+		System.out.println("Successfully Encoded!\n");
 	}
 }

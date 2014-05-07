@@ -59,20 +59,22 @@ public class HuffmanDriver {
 				subgenreTree = sg.buildTree();
 				encodedHash = huf.encodeWords(subgenreTree, new StringBuffer());
 				ArrayList<XYDataItem> items = new ArrayList<XYDataItem>();
-				for(SubGenre s : g.subgenres) {
-					System.out.println("Encoding " + s.title + " " + g.title + " with " + sg.title + " " + g.title);
-					try {
-						huffCount = s.huffCount(encodedHash);
-						blockCount = s.blockCount(encodedHash);
-						items.add(new XYDataItem(count, (huffCount/blockCount)));
-						System.out.println("Ratio: " + huffCount/blockCount);
-					} catch (Exception e) {
-						System.out.println("************Failed to encode");
-						e.printStackTrace();
+				for(Genre genre : huf.genres) { 
+					for(SubGenre s : genre.subgenres) {
+						System.out.println("Encoding " + s.title + " " + genre.title + " with " + sg.title + " " + genre.title);
+						try {
+							huffCount = s.huffCount(encodedHash);
+							blockCount = s.blockCount(encodedHash);
+							items.add(new XYDataItem(count, (huffCount/blockCount)));
+							System.out.println("Ratio: " + huffCount/blockCount);
+						} catch (Exception e) {
+							System.out.println("************Failed to encode");
+							e.printStackTrace();
+						}
 					}
 				}
 				try {
-					huf.makeGraph("title", sg.title, "", items);
+					huf.makeGraph("title", sg.title, "all other subs", items);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

@@ -1,4 +1,5 @@
 import java.util.Hashtable;
+import java.util.Map.Entry;
 
 
 
@@ -6,23 +7,48 @@ public class HuffmanDriver {
 
 	public static void main(String[] args) {
 		Huffman huf = new Huffman("lyricdata");
-		Hashtable<String, HuffmanTree> subgenreTrees = new Hashtable<String, HuffmanTree>();
-		Hashtable<String, HuffmanTree> genreTrees = new Hashtable<String, HuffmanTree>();
+		HuffmanTree genreTree;
+		HuffmanTree subgenreTree;
+		Hashtable<String, String> encodedHash;
+		double huffCount, blockCount;
 		
 		System.out.println("\nBuilding word count for all artists");
 		huf.countSubs();
 		System.out.println("Words have been counted!\n");
 		
-		System.out.println("Building the trees for each subgenre and genre");
+		/***** First Part, Compress each subgenre and genre with its own tree *********/
 		for(Genre g : huf.genres) {
-			System.out.println("\tCurrent genre: " + g.title);
-			genreTrees.put(g.title, g.buildTree());
-			for(SubGenre sg : g.subgenres) {
-				System.out.println("\t\tCurrent Subgenre: " + sg.title);
-				subgenreTrees.put(sg.title, sg.buildTree());
+			System.out.println("Building tree for " + g.title);
+			genreTree = g.buildTree();
+			System.out.println("Tree built!\n\nEncoding words...");
+			encodedHash = huf.encodeWords(genreTree, new StringBuffer());
+			System.out.println("Words Encoded!");
+			try {
+				huffCount = g.huffCount(encodedHash);
+				blockCount = g.blockCount(encodedHash);
+				System.out.println("\nRatio for " + g.title + "\t" + huffCount/blockCount);
+			} catch (Exception e) {
+				System.out.println("Error in compression");
+				e.printStackTrace();
 			}
+			for(SubGenre sg : g.subgenres) {
+				System.out.println("Building tree for " + sg.title);
+				subgenreTree = sg.buildTree();
+				System.out.println("Tree built!\n\nEncoding words...");
+				encodedHash = huf.encodeWords(subgenreTree, new StringBuffer());
+				System.out.println("Words Encoded!");
+				try {
+					huffCount = sg.huffCount(encodedHash);
+					blockCount = sg.blockCount(encodedHash);
+					System.out.println("\nRatio for " + sg.title + "\t" + huffCount/blockCount);
+				} catch (Exception e) {
+					System.out.println("Error in compression");
+					e.printStackTrace();
+				}
+			}
+			
 		}
-		System.out.println("\nAll trees built!");
+		
 		
 		/*
 		SubGenre bluegrass = huf.genres.get(0).subgenres.get(0);
